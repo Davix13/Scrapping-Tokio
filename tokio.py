@@ -1,4 +1,7 @@
+# selenium 4
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 #Modulo para gestionar nuestro SO
 import os
 
@@ -9,15 +12,16 @@ from selenium.webdriver.chrome.options import Options
 from vimeo_downloader import Vimeo
 import time
 
-print(os.getcwd())
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+
 #lista para guardar urls
 personal= [] #URL de los menus
 cursos = {}#URL de los cursos
 modulos = [] #URL de los modulos de los cursos
 enlaceModulos = [] #URL de los modulos de un curso.
 nombreCarpetas = [] #URl de las carpetas de los apartados de los modulos
-urlDocumentos = {}
-driver = webdriver.Chrome()
+urlDocumentos = []
+
 driver.get("https://learning.tokioschool.com/my")
 driver.maximize_window()
 
@@ -47,11 +51,20 @@ time.sleep(1)
 #Creamos un diccionario con el titulo del curso y la página
 for element in pagina.find_elements(By.CSS_SELECTOR,"div.enrolled"):
         for curso in element.find_elements(By.CSS_SELECTOR,"a.itop_course_overview-linkbox"):
-            cursos[curso.find_element(By.TAG_NAME, "h6").text] =curso.get_attribute("href")
-print(cursos)
+            cursos[curso.find_element(By.TAG_NAME, "h6").text] = curso.get_attribute("href")
+#print(cursos.keys())
+#En "cursos" tenemos un diccionario con el nombre del curso y la url
+
 
 #ruta de carpeta
 rutaCarpeta = "/Users/d.rodriguez/Desktop/Cursos Tokio/"
+
+#Crear carpeta
+if os.path.exists(rutaCarpeta):
+    print("La carpeta {} ya existe.".format(rutaCarpeta))
+else:
+    os.mkdir(rutaCarpeta)
+
 #Vamos a crear las carpetas de cada curso
 for element in cursos.keys():
     element = element.replace(":","")
@@ -59,8 +72,15 @@ for element in cursos.keys():
         print("Carpeta ya existe")
     else:
         os.mkdir("{}{}".format(rutaCarpeta,element))
+        print("Carpeta Creada {}{}".format(rutaCarpeta,element))
 
+for element in cursos.keys():
+    element = element.replace(":", "")
+    os.chdir(rutaCarpeta + element)#Nos movemos a la carpeta de cada curso
+    #print(os.getcwd())
+    time.sleep(1)
 
+#Cogemos los enlaces de los cursos para acceder a ellos
 for element in cursos.values():
     driver.get(element)
     print(element)
@@ -71,7 +91,7 @@ for element in cursos.values():
         try:
             for enlace in temas.find_elements(By.CSS_SELECTOR,"div.thumbnail"):
                 enlaceModulos.append(enlace.find_element(By.TAG_NAME,"a").get_attribute("href"))
-                #print(enlace.find_element(By.TAG_NAME,"h4").text)
+                print(enlace.find_element(By.TAG_NAME,"h4").text)
 
         except:
             print("No tiene enlace")
@@ -80,8 +100,8 @@ for element in cursos.values():
     except NoSuchElementException as e:
         print("No tiene modulos")
 
-print(enlaceModulos) #Tenemos los enlaces de cada modulo dentro de cada curso(Los que podemos tener ya quet tenemos que cursar el curso para obtener todos)
-
+print(enlaceModulos) #Tenemos los enlaces de cada modulo dentro de cada curso(Los que podemos tener ya que tenemos que cursar el curso para obtener todos)
+'''
 #Ahora vamos a recorre cada modulo para desplegar sus temas
 for element in enlaceModulos:
     driver.get(element)
@@ -109,3 +129,4 @@ print("--------------------")
 print(urlDocumentos)
 
 
+'''
