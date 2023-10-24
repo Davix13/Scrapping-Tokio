@@ -20,6 +20,7 @@ cursos = {}#URL de los cursos
 modulos = {} #URL de los modulos de los cursos
 nombreModulos = []#Nombre de los modulos
 enlaceModulos = [] #URL de los modulos de un curso.
+carpetasUnidades = []#Nombre de las carpetas de cada Curso
 nombreCarpetas = [] #URl de las carpetas de los apartados de los modulos
 urlDocumentos = []
 
@@ -77,6 +78,7 @@ for element in cursos.keys():
 
 course = cursos.items()
 
+#Entramos en cada curso para extraer las url de los modulos
 for clave,valor in course:
     clave = clave.replace(":", "")
     os.chdir(rutaCarpeta + clave)#Nos movemos a la carpeta de cada curso
@@ -110,5 +112,30 @@ for clave,valor in course:
         print("No tiene modulos")
 #print(len(enlaceModulos))
 
-#Entramos en cada modulo para extraer el nombre del mismo
+#Entramos en cada modulo para extraer el nombre del mismo y crear la carpeta de cada modulo
+
+for element in enlaceModulos:
+    driver.get(element)
+    time.sleep(1)
+    try:
+        nombre = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/div/div/section/div/div/div/div/ul/li/div/div/div/div/div/table/thead/tr/th[4]/h1/strong/span").text
+        #print("{}".format(nombre))
+        carpetasUnidades.append(nombre)
+    except:
+        try:
+            titulo = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/div/div/section/div/div/div/div/ul/li/div/div/div/ul[1]/li/div/div/div[2]/div/div/div/p/strong/span/span").text
+            #print(titulo)
+            carpetasUnidades.append(titulo)
+
+        except:
+            try:
+                title = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/div/div/section/div/div/div/div/ul/li/div/div/div/div/div/table/thead/tr/th[3]/h1/span/strong/span").text
+                #print(title)
+                carpetasUnidades.append(title)
+            except:
+                print("Error es no intentarlo")
+print(carpetasUnidades)
+
+
+
 
