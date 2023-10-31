@@ -21,8 +21,10 @@ modulos = {} #URL de los modulos de los cursos
 nombreModulos = []#Nombre de los modulos
 enlaceModulos = [] #URL de los modulos de un curso.
 carpetasUnidades = []#Nombre de las carpetas de cada Curso
+cabeceras=[]#Cabeceras de los cursos
 nombreCarpetas = [] #URl de las carpetas de los apartados de los modulos
 urlDocumentos = []
+diccionarioCarpetas = {}
 
 driver.get("https://learning.tokioschool.com/my")
 driver.maximize_window()
@@ -112,29 +114,74 @@ for clave,valor in course:
         print("No tiene modulos")
 #print(len(enlaceModulos))
 
-#Entramos en cada modulo para extraer el nombre del mismo y crear la carpeta de cada modulo
+#Entramos en cada modulo para extraer el nombre del mismo
 
 for element in enlaceModulos:
     driver.get(element)
     time.sleep(1)
     try:
+        cabecera = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/header/div/div/div/div[1]/div/div/div/h1").text
+        os.chdir(rutaCarpeta + cabecera)
+        #print(cabecera)
+        print(os.getcwd())
+        if cabecera in cabeceras:
+            print("Ya existe: {}".format(cabecera))
+        else:
+            cabeceras.append(cabecera)
+            print("Agregamos {} a la lista".format(cabecera))
+
+
         nombre = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/div/div/section/div/div/div/div/ul/li/div/div/div/div/div/table/thead/tr/th[4]/h1/strong/span").text
-        #print("{}".format(nombre))
+        print("{}".format(nombre))
         carpetasUnidades.append(nombre)
+        if os.path.exists("{}{}/{}".format(rutaCarpeta, cabecera,nombre)):
+            print("Carpeta ya existe")
+        else:
+            os.mkdir("{}{}/{}".format(rutaCarpeta, cabecera,nombre))
+            print("Carpeta Creada {}{}/{}".format(rutaCarpeta, cabecera,nombre))
+
     except:
         try:
             titulo = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/div/div/section/div/div/div/div/ul/li/div/div/div/ul[1]/li/div/div/div[2]/div/div/div/p/strong/span/span").text
-            #print(titulo)
+            print(titulo)
             carpetasUnidades.append(titulo)
+            if os.path.exists("{}{}/{}".format(rutaCarpeta, cabecera, titulo)):
+                print("Carpeta ya existe")
+            else:
+                os.mkdir("{}{}{}".format(rutaCarpeta, cabecera, titulo))
+                print("Carpeta Creada {}{}/{}".format(rutaCarpeta, cabecera, titulo))
 
         except:
             try:
                 title = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/div/div/section/div/div/div/div/ul/li/div/div/div/div/div/table/thead/tr/th[3]/h1/span/strong/span").text
-                #print(title)
+                print(title)
                 carpetasUnidades.append(title)
+                if os.path.exists("{}{}/{}".format(rutaCarpeta, cabecera, title)):
+                    print("Carpeta ya existe")
+                else:
+                    os.mkdir("{}{}/{}".format(rutaCarpeta, cabecera, title))
+                    print("Carpeta Creada {}{}/{}".format(rutaCarpeta, cabecera, title))
             except:
-                print("Error es no intentarlo")
-print(carpetasUnidades)
+                print("No tiene cabecera")
+#print(carpetasUnidades)
+#print(cabeceras)
+
+#Tenemos los nombres de los módulos y los enlaces
+#Vamos crear cada carpeta dentro del curso y para que sepa donde tiene que ir vamos a coger tambien las cabeceras
+
+'''
+for element in enlaceModulos:
+    driver.get(element)
+    time.sleep(1)
+    try:
+        cabecera = driver.find_element(By.XPATH,"/html/body/div[5]/div[2]/header/div/div/div/div[1]/div/div/div/h1").text
+        os.chdir(rutaCarpeta + cabecera)
+        #print(os.getcwd())
+            
+    except:
+        print("Perdidos")
+'''
+
 
 
 
