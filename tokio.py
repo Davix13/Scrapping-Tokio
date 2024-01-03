@@ -101,7 +101,7 @@ for element in cursos.values():
         print("No tiene modulos")
 
 print(enlaceModulos) #Tenemos los enlaces de cada modulo dentro de cada curso(Los que podemos tener ya que tenemos que cursar el curso para obtener todos)
-'''
+
 #Ahora vamos a recorre cada modulo para desplegar sus temas
 for element in enlaceModulos:
     driver.get(element)
@@ -129,4 +129,3 @@ print("--------------------")
 print(urlDocumentos)
 
 
-'''
