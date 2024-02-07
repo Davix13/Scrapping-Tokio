@@ -17,7 +17,6 @@ mis_cookies={"__cf_bm":"Fr5EDSKcA1uLNgbwWIZ8ZTfJVpmbeATTvfCLNqFjh_A-1707299366-1
 response = requests.get(url, headers=headers,cookies=mis_cookies)
 print(response.status_code)
 
-
 # Guarda el contenido HTML en un archivo de texto
 with open('pagina.html', 'w', encoding='utf-8') as archivo:
     archivo.write(response.text)
